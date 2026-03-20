@@ -30,5 +30,9 @@ public class Player // Replace array of strings to increases readability and mai
         Potions = potions;
         Inventory = inventory;
     }
-    
+
+    public void Heal(int amount)
+    {
+        Hp += amount;
+    }
 }
