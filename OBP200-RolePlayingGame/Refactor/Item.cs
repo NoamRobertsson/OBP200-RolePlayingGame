@@ -1,10 +1,10 @@
-﻿namespace OBP200_RolePlayingGame.Inventory;
+﻿namespace OBP200_RolePlayingGame;
 
 public abstract class Item
 { 
     public string Name { get; protected set; }
 
-    public Item(string name)
+    protected Item(string name)
     {
         Name = name;
     }
