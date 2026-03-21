@@ -14,9 +14,9 @@ public class Player // Replace array of strings to increases readability and mai
     private int Xp { get; set; }
     private int Level { get; set; }
     private int Potions { get; set; }
-    private List<string> Inventory { get; set; } // semicolon-sep
+    private Inventory Inventory { get; set; } // semicolon-sep
     
-    public Player(string name, string playerClass, int hp, int maxHp, int atk, int def, int gold, int xp, int level, int potions, List<string> inventory)
+    public Player(string name, string playerClass, int hp, int maxHp, int atk, int def, int gold, int xp, int level, int potions, Inventory inventory)
     {
         Name = name;
         Class = playerClass;
@@ -33,6 +33,8 @@ public class Player // Replace array of strings to increases readability and mai
 
     public void Heal(int amount)
     {
+        Inventory.Remove(ItemID.Potion);
         Hp += amount;
+        if (Hp > MaxHp) Hp = MaxHp;
     }
 }
