@@ -8,9 +8,9 @@ public class Player // Replace array of strings to increases readability and mai
     private string Class { get; set; }
     private int Hp { get; set; }
     private int MaxHp { get; set; }
-    private int Atk { get; set; }
+    public int Atk { get; private set; }
     private int Def { get; set; }
-    private int Gold { get; set; }
+    public int Gold { get; set; }
     private int Xp { get; set; }
     private int Level { get; set; }
     private Inventory Inventory { get; set; } // semicolon-sep
