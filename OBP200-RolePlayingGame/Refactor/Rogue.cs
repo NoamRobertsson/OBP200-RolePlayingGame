@@ -10,7 +10,7 @@ public class Rogue : ClassType
         return (Program.Rng.NextDouble() < 0.2) ? 4 : 0; // rogue crit-chans
     }
     
-    public override int SpecialAttackDamage(int enemyDef, bool vsBoss, Player player)
+    public override int SpecialAttackDamage(int enemyDef, Player player)
     {
         if (Program.Rng.NextDouble() < 0.5) // 50% chans att träffa
         {

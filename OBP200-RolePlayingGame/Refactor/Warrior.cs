@@ -6,7 +6,7 @@ public class Warrior : ClassType
 
     public override int DmgBuff() => 1;
     
-    public override int SpecialAttackDamage(int enemyDef, bool vsBoss, Player player)
+    public override int SpecialAttackDamage(int enemyDef, Player player)
     {
         Console.WriteLine("Warrior använder Heavy Strike!");
         player.ApplyDamageToPlayer(2); // självskada

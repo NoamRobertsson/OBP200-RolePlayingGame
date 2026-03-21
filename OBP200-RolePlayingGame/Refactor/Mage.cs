@@ -7,7 +7,7 @@ public class Mage : ClassType
 
     public override int DmgBuff() => 2;
     
-    public override int SpecialAttackDamage(int enemyDef, bool vsBoss, Player player)
+    public override int SpecialAttackDamage(int enemyDef, Player player)
     {
         if (player.Gold >= 3)
         {
