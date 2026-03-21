@@ -5,7 +5,7 @@ public class Player // Replace array of strings to increases readability and mai
     // Spelarens "databas": alla värden som strängar
     // index: 0 Name, 1 Class, 2 HP, 3 MaxHP, 4 ATK, 5 DEF, 6 GOLD, 7 XP, 8 LEVEL, 9 POTIONS, 10 INVENTORY (semicolon-sep)
     private string Name { get; set; }
-    private string Class { get; set; }
+    private ClassType Class { get; set; }
     private int Hp { get; set; }
     private int MaxHp { get; set; }
     public int Atk { get; private set; }
@@ -15,7 +15,7 @@ public class Player // Replace array of strings to increases readability and mai
     private int Level { get; set; }
     private Inventory Inventory { get; set; } // semicolon-sep
     
-    public Player(string name, string playerClass, int hp, int maxHp, int atk, int def, int gold, int xp, int level, int potions, Inventory inventory)
+    public Player(string name, ClassType playerClass, int hp, int maxHp, int atk, int def, int gold, int xp, int level, int potions, Inventory inventory)
     {
         Name = name;
         Class = playerClass;
@@ -37,51 +37,9 @@ public class Player // Replace array of strings to increases readability and mai
     }
         public int UseClassSpecial(int enemyDef, bool vsBoss)
     {
-        int specialDmg = 0;
-        var rng = new Random();
-
-        // Hantering av specialförmågor
-        if (Class == "Warrior")
-        {
-            // Heavy Strike: hög skada men självskada
-            Console.WriteLine("Warrior använder Heavy Strike!");
-            specialDmg = Math.Max(2, ATK + 3 - enemyDef);
-            ApplyDamageToPlayer(2); // självskada
-        }
-        else if (Class == "Mage")
-        {
-            // Fireball: stor skada, kostar guld
-            if (GOLD >= 3)
-            {
-                Console.WriteLine("Mage kastar Fireball!");
-                GOLD -= 3;
-                specialDmg = Math.Max(3, ATK + 5 - (enemyDef / 2));
-            }
-            else
-            {
-                Console.WriteLine("Inte tillräckligt med guld för att kasta Fireball (kostar 3).");
-                specialDmg = 0;
-            }
-        }
-        else if (Class == "Rogue")
-        {
-            // Backstab: chans att ignorera försvar, hög risk/hög belöning
-            if (rng.NextDouble() < 0.5)
-            {
-                Console.WriteLine("Rogue utför en lyckad Backstab!");
-                specialDmg = Math.Max(4, ATK + 6);
-            }
-            else
-            {
-                Console.WriteLine("Backstab misslyckades!");
-                specialDmg = 1;
-            }
-        }
-        else
-        {
-            specialDmg = 0;
-        }
-
+        //Hämta klassens SpecialAttackDamage
+        int specialDmg = Class.SpecialAttackDamage(enemyDef, this);& "C:\Users\noamr\RiderProjects\OBP200-RolePlayingGame\OBP200-RolePlayingGame\bin\Debug\net10.0\OBP200-RolePlayingGame.exe"
+        
         // Dämpa skada mot bossen
         if (vsBoss)
         {
@@ -101,24 +59,11 @@ public class Player // Replace array of strings to increases readability and mai
     {
 
         // Beräkna grundskada
-        int baseDmg = Math.Max(1, ATK - (enemyDef / 2));
-        int roll = Rng.Next(0, 3); // liten variation
-
-        switch (Class)
-        {
-            case "Warrior":
-                baseDmg += 1; // warrior buff
-                break;
-            case "Mage":
-                baseDmg += 2; // mage buff
-                break;
-            case "Rogue":
-                baseDmg += (Rng.NextDouble() < 0.2) ? 4 : 0; // rogue crit-chans
-                break;
-            default:
-                baseDmg += 0;
-                break;
-        }
+        int baseDmg = Math.Max(1, Atk - (enemyDef / 2));
+        int roll = Program.Rng.Next(0, 3); // liten variation
+        
+        //lägg till klass-buff
+        baseDmg += Class.
 
         return Math.Max(1, baseDmg + roll);
     }
