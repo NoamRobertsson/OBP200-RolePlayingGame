@@ -26,7 +26,6 @@ public class Player // Replace array of strings to increases readability and mai
         Gold = gold;
         Xp = xp;
         Level = level;
-        Potions = potions;
         Inventory = inventory;
     }
 
