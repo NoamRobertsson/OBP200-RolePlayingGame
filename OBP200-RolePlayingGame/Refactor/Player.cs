@@ -51,8 +51,8 @@ public class Player // Replace array of strings to increases readability and mai
     
     public void ApplyDamageToPlayer(int dmg)
     {
-        HP -= Math.Max(0, dmg); // Apply damage without negatives to prevent healing
-        HP = Math.Max(0, HP); // set to 0 if HP goes negative and player is dead
+        Hp -= Math.Max(0, dmg); // Apply damage without negatives to prevent healing
+        Hp = Math.Max(0, Hp); // set to 0 if HP goes negative and player is dead
     }
 
     public int CalculatePlayerDamage(int enemyDef)
