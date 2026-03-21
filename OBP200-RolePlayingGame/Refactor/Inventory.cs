@@ -2,15 +2,46 @@
 
 public class Inventory
 {
-    private List<Item> _items = new();
+    private List<string> _equipment = new();
+    private int Potions { get; set; }
+    private int MinorGems { get; set; }
+    
 
-    public void Add(Item item)
+    public void Add(ItemID id, string? name = null)
     {
-        _items.Add(item);
+        switch(id){
+            case ItemID.Potion:
+                Potions++;
+                break;
+            
+            case ItemID.MinorGem:
+                MinorGems++;
+                break;
+            
+            case ItemID.Equipment:
+                if (name == null) return;
+                _equipment.Add(name);
+                break;
+        }
     }
 
-    public void Remove(Item item)
+// remove item from inventory, can be used when buying/selling items or using potions
+    public void Remove(ItemID id)
     {
-        _items.Remove(item);
+        switch (id)
+        {
+            case ItemID.Potion:
+                if (Potions > 0) Potions--;
+                break;
+
+            case ItemID.MinorGem:
+                if (MinorGems > 0) MinorGems--;
+                break;
+        }
     }
+
+    //Get sale price of item and remove it from inventory
+
+    }
+
 }
