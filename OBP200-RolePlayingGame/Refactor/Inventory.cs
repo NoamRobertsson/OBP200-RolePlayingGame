@@ -26,19 +26,29 @@ public class Inventory
         }
     }
 
-// remove item from inventory, can be used when buying/selling items or using potions
-    public void Remove(ItemID id)
+// return true to check for removal success, can be used when buying/selling items or using potions
+    public bool Remove(ItemID id)
     {
         switch (id)
         {
             case ItemID.Potion:
-                if (Potions > 0) Potions--;
-                break;
+                if (Potions > 0)
+                {
+                    Potions--;
+                    return true;
+                }
+                return false;
 
             case ItemID.MinorGem:
-                if (MinorGems > 0) MinorGems--;
-                break;
+                if (MinorGems > 0)
+                {
+                    MinorGems--;
+                    return true;
+                }
+                return false;
+            
+            default: return false;
         }
-    }
+    } 
 }
     
