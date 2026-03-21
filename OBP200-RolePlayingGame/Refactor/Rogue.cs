@@ -5,6 +5,7 @@ namespace OBP200_RolePlayingGame;
 public class Rogue : ClassType
 {
     public override (int Maxhp, int Atk, int Def) LevelUpStats { get; protected set; } = (3, 3, 1);
+    public override double FlightChance { get; protected set; } = 0.5;
 
     public override int DmgBuff(){
         return (Program.Rng.NextDouble() < 0.2) ? 4 : 0; // rogue crit-chans

@@ -4,6 +4,7 @@ public class Mage : ClassType
 {
 
     public override (int Maxhp, int Atk, int Def) LevelUpStats { get; protected set; } = (4, 4, 1);
+    public override double FlightChance { get; protected set; } = 0.35;
 
     public override int DmgBuff() => 2;
     

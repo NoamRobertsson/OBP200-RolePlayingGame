@@ -63,7 +63,7 @@ public class Player // Replace array of strings to increases readability and mai
         int roll = Program.Rng.Next(0, 3); // liten variation
         
         //lägg till klass-buff
-        baseDmg += Class.
+        baseDmg += Class.DmgBuff();
 
         return Math.Max(1, baseDmg + roll);
     }
@@ -90,10 +90,8 @@ public class Player // Replace array of strings to increases readability and mai
     public bool TryRunAway()
     {
         // Flyktschans baserad på karaktärsklass
-        double chance = 0.25;
-        if (Class == "Rogue") chance = 0.5;
-        if (cls == "Mage") chance = 0.35;
-        return Rng.NextDouble() < chance;
+        double chance = Class.FlightChance;
+        return Program.Rng.NextDouble() < chance;
     }
 
     public static bool IsPlayerDead()
