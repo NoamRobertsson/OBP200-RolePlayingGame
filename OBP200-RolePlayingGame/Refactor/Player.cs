@@ -31,17 +31,28 @@ public class Player //
         Potions = potions;
         Inventory = inventory;
     }
+    
+    
 
     public void Heal(int amount = 12)
     {
         Hp += amount;
         if (Hp > MaxHp) Hp = MaxHp;
     }
-        public int UseClassSpecial(int enemyDef, bool vsBoss)
+        public int UseClassSpecial(int enemyDef, bool vsBoss, Random rng)
     {
-        //Hämta klassens SpecialAttackDamage
-        int specialDmg = Class.SpecialAttackDamage(enemyDef, this);& "C:\Users\noamr\RiderProjects\OBP200-RolePlayingGame\OBP200-RolePlayingGame\bin\Debug\net10.0\OBP200-RolePlayingGame.exe"
+        //Lagra spelarinformationen klassen behöver för att beräkna specialattacken
+        var context = new SpecialAttackContext()
+        {
+            PlayerAtk = Atk,
+            Rng = rng,
+            TrySpendGold = TrySpendGold,
+            TakeDamage = TakeDamage,
+            EnemyDef = enemyDef
+        };
         
+         var specialDmg = Class.SpecialAttackDamage(context);
+         
         // Dämpa skada mot bossen
         if (vsBoss)
         {
@@ -57,15 +68,15 @@ public class Player //
         Hp = Math.Max(0, Hp);
     }
 
-    public int CalculatePlayerDamage(int enemyDef)
+    public int CalculatePlayerDamage(int enemyDef, Random rng)
     {
 
         // Beräkna grundskada
         int baseDmg = Math.Max(1, Atk - (enemyDef / 2));
-        int roll = Program.Rng.Next(0, 3); // liten variation
+        int roll = rng.Next(0, 3); // liten variation
         
         //lägg till klass-buff
-        baseDmg += Class.DmgBuff();
+        baseDmg += Class.DmgBuff(rng);
 
         return Math.Max(1, baseDmg + roll);
     }
@@ -110,12 +121,10 @@ public class Player //
         Gold += Math.Max(0, amount);
     }
 
-    public static void TryBuy(int cost, Action apply, string successMsg)
+    public void TryBuy(int cost, Action apply, string successMsg)
     {
-        int gold = ParseInt(Player[6], 0);
-        if (gold >= cost)
+        if (TrySpendGold(cost))
         {
-            Player[6] = (gold - cost).ToString();
             apply();
             Console.WriteLine(successMsg);
         }
@@ -146,28 +155,11 @@ public class Player //
             Level += 1;
 
             // Uppgradering baserad på karaktärsklass
-            Class.ApplyLevelUp(this);
-
-            switch (cls)
-            {
-                case "Warrior":
-                    maxhp += 6; atk += 2; def += 2;
-                    break;
-                case "Mage":
-                    maxhp += 4; atk += 4; def += 1;
-                    break;
-                case "Rogue":
-                    maxhp += 5; atk += 3; def += 1;
-                    break;
-                default:
-                    maxhp += 4; atk += 3; def += 1;
-                    break;
-            }
-
-            Player[3] = maxhp.ToString();
-            Player[4] = atk.ToString();
-            Player[5] = def.ToString();
-            Player[2] = maxhp.ToString(); // full heal vid level up
+            var (maxhp, atk, def) = Class.LevelUpStats;
+            MaxHp += maxhp;
+            Atk += atk;
+            Def += def;
+            Hp = MaxHp; // full heal vid level up
 
             Console.WriteLine($"Du når nivå {Level}! Värden ökade och HP återställd.");
         }
