@@ -4,7 +4,7 @@ public interface IClassType
 {
     string Name { get;}
     double RunAwayChance { get; } 
-    void ApplyLevelUp(Player player);
+    (int MaxHp, int Atk, int Def) LevelUpStats { get; }
     int DmgBuff(Random rng); // Konstant buff för alla klasser förutom rogue   
-    int SpecialAttackDamage(int enemyDef,Random rng, Player player);
+    int SpecialAttackDamage(SpecialAttackContext context);
 }
