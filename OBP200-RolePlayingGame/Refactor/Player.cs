@@ -1,21 +1,23 @@
-﻿namespace OBP200_RolePlayingGame;
+﻿namespace OBP200_RolePlayingGame.Refactor;
 
-public class Player // Replace array of strings to increases readability and maintainability in program
+//Player klass som ersätter arrayen i program. Den innehåller spelarens värden som attribut och hanterar logiken som relaterar till spelaren
+public class Player // 
 {
     // Spelarens "databas": alla värden som strängar
     // index: 0 Name, 1 Class, 2 HP, 3 MaxHP, 4 ATK, 5 DEF, 6 GOLD, 7 XP, 8 LEVEL, 9 POTIONS, 10 INVENTORY (semicolon-sep)
     private string Name { get; set; }
-    private ClassType Class { get; set; }
+    private IClassType Class { get; set; }
     private int Hp { get; set; }
     private int MaxHp { get; set; }
-    public int Atk { get; private set; }
+    private int Atk { get; set; }
     private int Def { get; set; }
-    public int Gold { get; set; }
-    private int Xp { get; set; }
+    private int Exp { get; set; }
     private int Level { get; set; }
+    private int Gold { get; set; }
+    private int Potions { get; set; }
     private Inventory Inventory { get; set; } // semicolon-sep
     
-    public Player(string name, ClassType playerClass, int hp, int maxHp, int atk, int def, int gold, int xp, int level, int potions, Inventory inventory)
+    public Player(string name, IClassType playerClass, int hp, int maxHp, int atk, int def, int gold, int xp, int level, int potions, Inventory inventory)
     {
         Name = name;
         Class = playerClass;
@@ -23,15 +25,15 @@ public class Player // Replace array of strings to increases readability and mai
         MaxHp = maxHp;
         Atk = atk;
         Def = def;
-        Gold = gold;
-        Xp = xp;
+        Exp = xp;
         Level = level;
+        Gold = gold;
+        Potions = potions;
         Inventory = inventory;
     }
 
-    public void HealPlayer(int amount)
+    public void Heal(int amount = 12)
     {
-        Inventory.Remove(ItemID.Potion);
         Hp += amount;
         if (Hp > MaxHp) Hp = MaxHp;
     }
@@ -49,10 +51,10 @@ public class Player // Replace array of strings to increases readability and mai
         return Math.Max(0, specialDmg);
     }
     
-    public void ApplyDamageToPlayer(int dmg)
+    public void TakeDamage(int dmg)
     {
-        Hp -= Math.Max(0, dmg); // Apply damage without negatives to prevent healing
-        Hp = Math.Max(0, Hp); // set to 0 if HP goes negative and player is dead
+        Hp -= Math.Max(0, dmg); 
+        Hp = Math.Max(0, Hp);
     }
 
     public int CalculatePlayerDamage(int enemyDef)
@@ -71,9 +73,7 @@ public class Player // Replace array of strings to increases readability and mai
     public void UsePotion()
     {
         // Ta bort en dryck från inventory och meddela om det inte finns några kvar
-        var potionIsRemoved = Inventory.Remove(ItemID.Potion);
-        // Helning av spelaren
-        if (!potionIsRemoved)
+        if (Potions <= 0)
         {
             Console.WriteLine("Du har inga drycker kvar.");
         }
@@ -81,35 +81,33 @@ public class Player // Replace array of strings to increases readability and mai
         {
             int previousHp = Hp;
             int heal = 12;
-            HealPlayer(heal);
+            Heal(heal); // Helning av spelaren
             Console.WriteLine($"Du dricker en dryck och återfår {Hp - previousHp} HP.");
         }
         
     }
 
-    public bool TryRunAway()
+    public bool TryRunAway(Random rng)
     {
         // Flyktschans baserad på karaktärsklass
-        double chance = Class.FlightChance;
-        return Program.Rng.NextDouble() < chance;
+        double chance = Class.RunAwayChance;
+        return rng.NextDouble() < chance;
     }
 
-    public static bool IsPlayerDead()
+    public bool IsDead()
     {
-        return ParseInt(Player[2], 0) <= 0;
+        return Hp <= 0;
     }
 
-    public static void AddPlayerXp(int amount)
+    public void AddExp(int amount)
     {
-        int xp = ParseInt(Player[7], 0) + Math.Max(0, amount);
-        Player[7] = xp.ToString();
+        Exp += Math.Max(0, amount);
         MaybeLevelUp();
     }
 
-    public static void AddPlayerGold(int amount)
+    public void AddGold(int amount)
     {
-        int gold = ParseInt(Player[6], 0) + Math.Max(0, amount);
-        Player[6] = gold.ToString();
+        Gold += Math.Max(0, amount);
     }
 
     public static void TryBuy(int cost, Action apply, string successMsg)
@@ -127,22 +125,28 @@ public class Player // Replace array of strings to increases readability and mai
         }
     }
 
-    private static void MaybeLevelUp()
+    public bool TrySpendGold(int cost)
+    {
+        if (Gold >= cost)
+        {
+            Gold -= cost;
+            return true;
+        }
+
+        return false;
+    }
+
+    private void MaybeLevelUp()
     {
         // Nivåtrösklar
-        int xp = ParseInt(Player[7], 0);
-        int lvl = ParseInt(Player[8], 1);
-        int nextThreshold = lvl == 1 ? 10 : (lvl == 2 ? 25 : (lvl == 3 ? 45 : lvl * 20));
+        int nextThreshold = Level == 1 ? 10 : (Level == 2 ? 25 : (Level == 3 ? 45 : Level * 20));
 
-        if (xp >= nextThreshold)
+        if (Exp >= nextThreshold)
         {
-            Player[8] = (lvl + 1).ToString();
+            Level += 1;
 
             // Uppgradering baserad på karaktärsklass
-            string cls = Player[1] ?? "Warrior";
-            int maxhp = ParseInt(Player[3], 1);
-            int atk = ParseInt(Player[4], 1);
-            int def = ParseInt(Player[5], 0);
+            Class.ApplyLevelUp(this);
 
             switch (cls)
             {
@@ -165,7 +169,7 @@ public class Player // Replace array of strings to increases readability and mai
             Player[5] = def.ToString();
             Player[2] = maxhp.ToString(); // full heal vid level up
 
-            Console.WriteLine($"Du når nivå {lvl + 1}! Värden ökade och HP återställd.");
+            Console.WriteLine($"Du når nivå {Level}! Värden ökade och HP återställd.");
         }
     }
 
@@ -229,9 +233,9 @@ public class Player // Replace array of strings to increases readability and mai
         Console.WriteLine($"Du säljer {count} st Minor Gem för {count * 5} guld.");
     }
 
-    public static void ShowStatus()
+    public void ShowStatus()
     {
-        Console.WriteLine($"[{Player[0]} | {Player[1]}]  HP {Player[2]}/{Player[3]}  ATK {Player[4]}  DEF {Player[5]}  LVL {Player[8]}  XP {Player[7]}  Guld {Player[6]}  Drycker {Player[9]}");
+        Console.WriteLine($"[{Name} | {Class}]  HP {Hp}/{MaxHp}  ATK {Atk}  DEF {Def}  LVL {Level}  XP {Exp}  Guld {Gold}  Drycker {Potions}");
         var inv = (Player[10] ?? "");
         if (!string.IsNullOrWhiteSpace(inv))
         {
@@ -239,11 +243,10 @@ public class Player // Replace array of strings to increases readability and mai
         }
     }
 
-    public static bool DoRest()
+    public bool DoRest()
     {
         Console.WriteLine("Du slår läger och vilar.");
-        int maxhp = Program.ParseInt(Player[3], 1);
-        Player[2] = maxhp.ToString();
+        Hp = MaxHp;
         Console.WriteLine("HP återställt till max.");
         return true;
     }
