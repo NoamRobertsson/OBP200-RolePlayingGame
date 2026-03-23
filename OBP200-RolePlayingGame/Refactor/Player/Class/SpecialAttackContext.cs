@@ -1,4 +1,4 @@
-﻿namespace OBP200_RolePlayingGame.Refactor;
+﻿namespace OBP200_RolePlayingGame.Refactor.Player.Class;
 
 // Kontext klass som skickas till IClassType för att undvika att hela player viass
 public sealed class SpecialAttackContext
