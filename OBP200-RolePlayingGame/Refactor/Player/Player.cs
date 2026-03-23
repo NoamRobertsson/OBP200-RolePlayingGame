@@ -1,4 +1,6 @@
-﻿namespace OBP200_RolePlayingGame.Refactor;
+﻿using OBP200_RolePlayingGame.Refactor.Player.Class;
+
+namespace OBP200_RolePlayingGame.Refactor.Player;
 
 //Player klass som ersätter arrayen i program. Den innehåller spelarens värden som attribut och hanterar logiken som relaterar till spelaren
 public class Player // 
@@ -15,7 +17,7 @@ public class Player //
     private int Level { get; set; }
     private int Gold { get; set; }
     private int Potions { get; set; }
-    private Inventory Inventory { get; set; } // semicolon-sep
+    private Inventory PlayerInventory { get; set; } // semicolon-sep
     
     public Player(string name, IClassType playerClass, int hp, int maxHp, int atk, int def, int gold, int xp, int level, int potions, Inventory inventory)
     {
@@ -29,7 +31,7 @@ public class Player //
         Level = level;
         Gold = gold;
         Potions = potions;
-        Inventory = inventory;
+        PlayerInventory = inventory;
     }
     
     
@@ -165,7 +167,7 @@ public class Player //
         }
     }
 
-    public static void MaybeDropLoot(string enemyName)
+    public void MaybeDropLoot(string enemyName)
     {
         // Enkel loot-regel
         if (Rng.NextDouble() < 0.35)
@@ -175,7 +177,7 @@ public class Player //
 
             var inv = (Player[10] ?? "").Trim();
             if (string.IsNullOrEmpty(inv)) Player[10] = item;
-            else Player[10] = inv + ";" + item;
+            else PlayerInventory.Add(item);
 
             Console.WriteLine($"Föremål hittat: {item} (lagt i din väska)");
         }
