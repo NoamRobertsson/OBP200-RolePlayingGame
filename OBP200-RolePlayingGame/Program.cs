@@ -1,4 +1,6 @@
 ﻿using System.Text;
+using OBP200_RolePlayingGame.Refactor.Player;
+using OBP200_RolePlayingGame.Refactor.Player.Class;
 
 namespace OBP200_RolePlayingGame;
 
@@ -6,6 +8,9 @@ namespace OBP200_RolePlayingGame;
 class Program
 {
     // ======= Globalt tillstånd  =======
+    
+    // variabel som håller player instans
+    private static Player player = null!;
 
     // Rum: [type, label]
     // types: battle, treasure, shop, rest, boss
@@ -26,6 +31,7 @@ class Program
     {
         Console.OutputEncoding = Encoding.UTF8;
         InitEnemyTemplates();
+        Player player = null!;
 
         while (true)
         {
@@ -71,32 +77,30 @@ class Program
         Console.Write("Val: ");
         var k = (Console.ReadLine() ?? "").Trim();
 
-        string cls = "Warrior";
-        int hp = 0, maxhp = 0, atk = 0, def = 0;
-        int potions = 0, gold = 0;
+        IClassType classType;
         
         switch (k)
         {
             case "1": // Warrior: tankig
-                cls = "Warrior";
-                maxhp = 40; hp = 40; atk = 7; def = 5; potions = 2; gold = 15;
+                classType = new Warrior();
                 break;
             case "2": // Mage: hög damage, låg def
-                cls = "Mage";
-                maxhp = 28; hp = 28; atk = 10; def = 2; potions = 2; gold = 15;
+                classType = new Mage();
                 break;
             case "3": // Rogue: krit-chans
-                cls = "Rogue";
-                maxhp = 32; hp = 32; atk = 8; def = 3; potions = 3; gold = 20;
+                classType = new Rogue();
                 break;
             default:
-                cls = "Warrior";
-                maxhp = 40; hp = 40; atk = 7; def = 5; potions = 2; gold = 15;
+                classType = new Warrior();
                 break;
         }
+        (int hp, int maxhp, int atk, int def,
+            int potions, int gold) = classType.BaseStats;
+        List<string> startingItems = new List<string>() { "Wooden Sword", "Cloth Armor" };
 
         // Konstruktor som ersätter player array
-        var player = new Player(name, cls, hp, maxhp, atk, def, gold, 0, 1, potions, new List<string> { "Wooden Sword", "Cloth Armor" });
+        player = new Player(name, classType, hp, maxhp, atk, def, gold,
+            0, 1, potions, new Inventory(startingItems));
         
 
         // Initiera karta (linjärt äventyr)
@@ -111,7 +115,7 @@ class Program
 
         CurrentRoomIndex = 0;
 
-        Console.WriteLine($"Välkommen, {name} the {cls}!");
+        Console.WriteLine($"Välkommen, {name} the {classType.Name}!");
         ShowStatus();
     }
 
@@ -124,7 +128,7 @@ class Program
 
             bool continueAdventure = EnterRoom(room[0]);
             
-            if (IsPlayerDead())
+            if (player.IsDead())
             {
                 Console.WriteLine("Du har stupat... Spelet över.");
                 break;
@@ -175,7 +179,7 @@ class Program
             case "shop":
                 return DoShop();
             case "rest":
-                return DoRest();
+                return player.DoRest();
             default:
                 Console.WriteLine("Du vandrar vidare...");
                 return true;
@@ -193,7 +197,7 @@ class Program
         int enemyAtk = ParseInt(enemy[3], 3);
         int enemyDef = ParseInt(enemy[4], 0);
 
-        while (enemyHp > 0 && !IsPlayerDead())
+        while (enemyHp > 0 && !player.IsDead())
         {
             Console.WriteLine();
             ShowStatus();
@@ -502,7 +506,7 @@ class Program
 
             var inv = (Player[10] ?? "").Trim();
             if (string.IsNullOrEmpty(inv)) Player[10] = item;
-            else Player[10] = inv + ";" + item;
+            else player;
 
             Console.WriteLine($"Föremål hittat: {item} (lagt i din väska)");
         }
