@@ -1,15 +1,18 @@
-﻿namespace OBP200_RolePlayingGame;
+﻿namespace OBP200_RolePlayingGame.Refactor;
 
-public class Warrior : ClassType
+public class Warrior : IClassType
 {
-    public override (int Maxhp, int Atk, int Def) LevelUpStats { get; protected set; } = (6, 2, 2);
+    public string Name { get; } = "Warrior";
+    public double RunAwayChance { get; } = 0.2;
+    public (int MaxHp, int Atk, int Def) LevelUpStats { get; } = (MaxHp: 6, Atk: 2, Def: 2);
+    private int SelfDamage => 2;
+    public int DmgBuff(Random rng) => 1;
 
-    public override int DmgBuff() => 1;
     
-    public override int SpecialAttackDamage(int enemyDef, Player player)
+    public int SpecialAttackDamage(SpecialAttackContext cxt)
     {
         Console.WriteLine("Warrior använder Heavy Strike!");
-        player.ApplyDamageToPlayer(2); // självskada
-        return Math.Max(2, player.Atk + 3 - enemyDef);
+        cxt.TakeDamage(SelfDamage); // självskada
+        return Math.Max(2, cxt.PlayerAtk + 3 - cxt.EnemyDef);
     }
 }

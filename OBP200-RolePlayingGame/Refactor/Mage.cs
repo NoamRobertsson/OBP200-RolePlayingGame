@@ -1,20 +1,21 @@
-﻿namespace OBP200_RolePlayingGame;
+﻿namespace OBP200_RolePlayingGame.Refactor;
 
-public class Mage : ClassType
+public class Mage : IClassType
 {
 
-    public override (int Maxhp, int Atk, int Def) LevelUpStats { get; protected set; } = (4, 4, 1);
-    public override double FlightChance { get; protected set; } = 0.35;
-
-    public override int DmgBuff() => 2;
+    public string Name { get; } = "Mage";
+    public double RunAwayChance { get; } = 0.35;
+    public (int MaxHp, int Atk, int Def) LevelUpStats { get; } = (MaxHp: 4, Atk: 4, Def: 1);
+    public int DmgBuff(Random rng) => 2;
+    private int SpecialAttackCost => 3;
     
-    public override int SpecialAttackDamage(int enemyDef, Player player)
+    
+    public int SpecialAttackDamage(SpecialAttackContext cxt)
     {
-        if (player.Gold >= 3)
+        if (cxt.TrySpendGold(SpecialAttackCost))
         {
             Console.WriteLine("Mage kastar Fireball!");
-            player.Gold -= 3;
-            return Math.Max(3, player.Atk + 5 - (enemyDef / 2));
+            return Math.Max(3, cxt.PlayerAtk + 5 - (cxt.EnemyDef / 2));
         }
 
         Console.WriteLine("Inte nog med guld för att använda Fireball!");

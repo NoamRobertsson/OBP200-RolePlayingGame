@@ -1,22 +1,20 @@
-﻿using System.Security.Cryptography;
-
-namespace OBP200_RolePlayingGame;
-
-public class Rogue : ClassType
+﻿namespace OBP200_RolePlayingGame.Refactor;
+public class Rogue : IClassType
 {
-    public override (int Maxhp, int Atk, int Def) LevelUpStats { get; protected set; } = (3, 3, 1);
-    public override double FlightChance { get; protected set; } = 0.5;
+    public string Name { get; } = "Rogue";
+    public double RunAwayChance { get; } = 0.5;
+    public (int MaxHp, int Atk, int Def) LevelUpStats { get; } = (MaxHp: 5, Atk: 3, Def: 1);
 
-    public override int DmgBuff(){
-        return (Program.Rng.NextDouble() < 0.2) ? 4 : 0; // rogue crit-chans
+    public int DmgBuff(Random rng){
+        return (rng.NextDouble() < 0.2) ? 4 : 0; // rogue crit-chans
     }
     
-    public override int SpecialAttackDamage(int enemyDef, Player player)
+    public int SpecialAttackDamage(SpecialAttackContext cxt)
     {
-        if (Program.Rng.NextDouble() < 0.5) // 50% chans att träffa
+        if (cxt.Rng.NextDouble() < 0.5) // 50% chans att träffa
         {
             Console.WriteLine("Rogue utför en lyckad Backstab!");
-            return Math.Max(4, player.Atk + 6);
+            return Math.Max(4, cxt.PlayerAtk + 6);
         }
 
         Console.WriteLine("Backstab misslyckades!");
