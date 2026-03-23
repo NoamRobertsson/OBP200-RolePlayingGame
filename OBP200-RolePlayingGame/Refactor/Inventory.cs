@@ -1,54 +1,29 @@
 ﻿namespace OBP200_RolePlayingGame;
 
+// Inventory som håller items separat från player-klassen
+// Används när spelaren plockar upp eller säljer något
 public class Inventory
 {
-    private List<string> _equipment = new();
-    private int Potions { get; set; }
-    private int MinorGems { get; set; }
+    private List<string> _items = new();
     
-
-    //Add 1 for integers and add item name to equipment list if theres a string, can be used for loot or shop interactions
-    public void Add(ItemID id, string? name = null)
+    public void Add(string name)
     {
-        switch(id){
-            case ItemID.Potion:
-                Potions++;
-                break;
-            
-            case ItemID.MinorGem:
-                MinorGems++;
-                break;
-            
-            case ItemID.Equipment:
-                if (name == null) return;
-                _equipment.Add(name);
-                break;
-        }
+        _items.Add(name);
     }
-
-// return true to check for removal success, can be used when buying/selling items or using potions
-    public bool Remove(ItemID id)
+    
+    public bool TryRemove(string name)
     {
-        switch (id)
-        {
-            case ItemID.Potion:
-                if (Potions > 0)
-                {
-                    Potions--;
-                    return true;
-                }
-                return false;
-
-            case ItemID.MinorGem:
-                if (MinorGems > 0)
-                {
-                    MinorGems--;
-                    return true;
-                }
-                return false;
-            
-            default: return false;
-        }
+        return _items.Remove(name);
     } 
+    
+    public bool IsEmpty()
+    {
+        return _items.Count == 0;
+    }
+    
+    public int NumberOf(string name)
+    {
+        return _items.Count(i => i == name);
+    }
 }
     
