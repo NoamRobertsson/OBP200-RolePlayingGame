@@ -1,20 +1,36 @@
-﻿namespace OBP200_RolePlayingGame;
+﻿using System.Runtime.InteropServices.Marshalling;
+
+namespace OBP200_RolePlayingGame;
 
 // Inventory som håller items separat från player-klassen
-// Används när spelaren plockar upp eller säljer något
+// Spelaren kan kalla på funktioner i inventory för att lägga till, ta bort och kolla items utan utan att Player eller Program kan se listan
 public class Inventory
 {
     private List<string> _items = new();
     
+    public Inventory(List<string> items){
+        _items = items;
+    }
+    
     public void Add(string name)
     {
-        _items.Add(name);
+        _items.Add(name.Trim());
     }
     
     public bool TryRemove(string name)
     {
         return _items.Remove(name);
-    } 
+    }
+
+    public void RemoveAll(string name)
+    {
+        _items.RemoveAll(x => x == name);
+    }
+
+    public string Show()
+    {
+        return string.Join(";", _items);
+    }
     
     public bool IsEmpty()
     {
@@ -23,7 +39,7 @@ public class Inventory
     
     public int NumberOf(string name)
     {
-        return _items.Count(i => i == name);
+        return _items.Count(x => x == name);
     }
 }
     
