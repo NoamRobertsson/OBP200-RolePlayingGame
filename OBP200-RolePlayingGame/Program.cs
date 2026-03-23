@@ -18,7 +18,7 @@ class Program
     static int CurrentRoomIndex = 0;
 
     // Random
-    public static Random Rng = new Random();
+    static Random Rng = new Random();
 
     // ======= Main =======
 
