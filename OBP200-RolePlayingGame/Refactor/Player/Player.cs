@@ -17,7 +17,7 @@ public class Player //
     private int Level { get; set; }
     private int Gold { get; set; }
     private int Potions { get; set; }
-    private Inventory PlayerInventory { get; set; } // semicolon-sep
+    private Inventory Inventory { get; } // semicolon-sep
     
     public Player(string name, IClassType playerClass, int hp, int maxHp, int atk, int def, int gold, int xp, int level, int potions, Inventory inventory)
     {
@@ -31,9 +31,8 @@ public class Player //
         Level = level;
         Gold = gold;
         Potions = potions;
-        PlayerInventory = inventory;
+        Inventory = inventory;
     }
-    
     
 
     public void Heal(int amount = 12)
@@ -177,7 +176,7 @@ public class Player //
 
             var inv = (Player[10] ?? "").Trim();
             if (string.IsNullOrEmpty(inv)) Player[10] = item;
-            else PlayerInventory.Add(item);
+            else Inventory.Add(item);
 
             Console.WriteLine($"Föremål hittat: {item} (lagt i din väska)");
         }
@@ -203,37 +202,33 @@ public class Player //
         return true;
     }
 
-    public static void SellMinorGems()
+    public void SellMinorGems()
     {
-        var inv = (Player[10] ?? "");
-        if (string.IsNullOrWhiteSpace(inv))
+        if (Inventory.IsEmpty())
         {
             Console.WriteLine("Du har inga föremål att sälja.");
             return;
         }
 
-        var items = inv.Split(';').Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
-        int count = items.Count(x => x == "Minor Gem");
+
+        int count = Inventory.NumberOf("Minor Gem");
         if (count == 0)
         {
             Console.WriteLine("Inga 'Minor Gem' i väskan.");
             return;
         }
-
-        items = items.Where(x => x != "Minor Gem").ToList();
-        Player[10] = items.Count == 0 ? "" : string.Join(";", items);
-
-        AddPlayerGold(count * 5);
+        
+        Inventory.RemoveAll("Minor Gem");
+        AddGold(count * 5);
         Console.WriteLine($"Du säljer {count} st Minor Gem för {count * 5} guld.");
     }
 
     public void ShowStatus()
     {
         Console.WriteLine($"[{Name} | {Class}]  HP {Hp}/{MaxHp}  ATK {Atk}  DEF {Def}  LVL {Level}  XP {Exp}  Guld {Gold}  Drycker {Potions}");
-        var inv = (Player[10] ?? "");
-        if (!string.IsNullOrWhiteSpace(inv))
+        if (!Inventory.IsEmpty())
         {
-            Console.WriteLine($"Väska: {inv}");
+            Console.WriteLine($"Väska: {Inventory.Show()}");
         }
     }
 
