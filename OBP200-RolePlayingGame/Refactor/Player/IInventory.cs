@@ -3,7 +3,6 @@
 public interface IInventory
 {
     void Add(string name);
-    bool TryRemove(string name);
     void RemoveAll(string name);    
     int NumberOf(string name);
     bool IsEmpty();

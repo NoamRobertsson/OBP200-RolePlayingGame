@@ -136,7 +136,7 @@ public class Player : IPurchaseTarget
         else{ Console.WriteLine("Du har inte råd."); }
     }
 
-    public bool TrySpendGold(int cost)
+    private bool TrySpendGold(int cost)
     {
         if (Gold >= cost)
         {

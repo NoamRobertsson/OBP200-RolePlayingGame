@@ -15,11 +15,6 @@ public class Inventory : IInventory
         _items.Add(name.Trim());
     }
     
-    public bool TryRemove(string name)
-    {
-        return _items.Remove(name);
-    }
-
     public void RemoveAll(string name)
     {
         _items.RemoveAll(x => x == name);
