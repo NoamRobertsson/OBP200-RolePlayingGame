@@ -1,4 +1,5 @@
 ﻿using OBP200_RolePlayingGame.Refactor.Player.Class;
+using OBP200_RolePlayingGame.Refactor.Player.Shop;
 
 namespace OBP200_RolePlayingGame.Refactor.Player;
 
@@ -94,6 +95,7 @@ public class Player : IPurchaseTarget
         {
             int previousHp = Hp;
             int heal = 12;
+            Potions -= 1;
             Heal(heal); // Helning av spelaren
             Console.WriteLine($"Du dricker en dryck och återfår {Hp - previousHp} HP.");
         }
