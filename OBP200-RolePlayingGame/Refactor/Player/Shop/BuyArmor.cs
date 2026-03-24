@@ -2,7 +2,7 @@
 
 public class BuyArmor : IPurchase
 {
-    public int Cost => 20;
+    public int Cost => 25;
     public string SuccessMsg => "Du köper bättre rustning.";
     public void Apply(IPurchaseTarget purchase){
         purchase.IncreaseDef();
