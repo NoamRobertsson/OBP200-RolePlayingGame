@@ -99,8 +99,7 @@ class Program
         List<string> startingItems = new List<string>() { "Wooden Sword", "Cloth Armor" };
 
         // Konstruktor som ersätter player array
-        player = new Player(name, classType, hp, maxhp, atk, def, gold,
-            0, 1, potions, new Inventory(startingItems));
+        player = new Player(name, classType, new Inventory(startingItems));
         
 
         // Initiera karta (linjärt äventyr)

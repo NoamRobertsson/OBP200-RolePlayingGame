@@ -20,18 +20,18 @@ public class Player : IPurchaseTarget
     private Inventory _inventory { get; } // semicolon-sep
     public IInventory Inventory => _inventory; // Exponera inventory som interface för att använda Inventory-klassen genom player-instansen i Program
     
-    public Player(string name, IClassType playerClass, int hp, int maxHp, int atk, int def, int gold, int xp, int level, int potions, Inventory inventory)
+    public Player(string name, IClassType playerClass, Inventory inventory)
     {
         Name = name;
         Class = playerClass;
-        Hp = hp;
-        MaxHp = maxHp;
-        Atk = atk;
-        Def = def;
-        Exp = xp;
-        Level = level;
-        Gold = gold;
-        Potions = potions;
+        Hp = playerClass.BaseStats.hp;
+        MaxHp = playerClass.BaseStats.maxHp;
+        Atk = playerClass.BaseStats.atk;
+        Def = playerClass.BaseStats.def;
+        Exp = 0; // Startar alltid på 0 XP
+        Level = 1; // Startar alltid på nivå 1
+        Gold = playerClass.BaseStats.gold;
+        Potions = playerClass.BaseStats.potions;
         _inventory = inventory;
     }
     
