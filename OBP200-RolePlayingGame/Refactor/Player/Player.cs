@@ -3,7 +3,7 @@
 namespace OBP200_RolePlayingGame.Refactor.Player;
 
 //Player klass som ersätter arrayen i program. Den innehåller spelarens värden som attribut och hanterar logiken som relaterar till spelaren
-public class Player // 
+public class Player : IPurchaseTarget
 {
     // Spelarens "databas": alla värden som strängar
     // index: 0 Name, 1 Class, 2 HP, 3 MaxHP, 4 ATK, 5 DEF, 6 GOLD, 7 XP, 8 LEVEL, 9 POTIONS, 10 INVENTORY (semicolon-sep)
@@ -12,12 +12,13 @@ public class Player //
     private int Hp { get; set; }
     private int MaxHp { get; set; }
     private int Atk { get; set; }
-    private int Def { get; set; }
+    public int Def { get; private set; }
     private int Exp { get; set; }
     private int Level { get; set; }
-    private int Gold { get; set; }
-    private int Potions { get; set; }
-    private Inventory Inventory { get; } // semicolon-sep
+    public int Gold { get; private set; }
+    public int Potions { get; private set; }
+    private Inventory _inventory { get; } // semicolon-sep
+    public IInventory Inventory => _inventory; // Exponera inventory som interface för att använda Inventory-klassen genom player-instansen i Program
     
     public Player(string name, IClassType playerClass, int hp, int maxHp, int atk, int def, int gold, int xp, int level, int potions, Inventory inventory)
     {
@@ -31,7 +32,7 @@ public class Player //
         Level = level;
         Gold = gold;
         Potions = potions;
-        Inventory = inventory;
+        _inventory = inventory;
     }
     
 
@@ -69,7 +70,7 @@ public class Player //
         Hp = Math.Max(0, Hp);
     }
 
-    public int CalculatePlayerDamage(int enemyDef, Random rng)
+    public int DealDamage(int enemyDef, Random rng)
     {
 
         // Beräkna grundskada
@@ -121,18 +122,18 @@ public class Player //
     {
         Gold += Math.Max(0, amount);
     }
+    public void AddPotion(int amount = 1) => Potions += Math.Max(0, amount);
+    public void IncreaseAtk(int amount = 2) => Atk += Math.Max(0, amount);
+    public void IncreaseDef(int amount = 2) => Def += Math.Max(0, amount);
 
-    public void TryBuy(int cost, Action apply, string successMsg)
+    public void TryBuy(IPurchase purchase)
     {
-        if (TrySpendGold(cost))
+        if (TrySpendGold(purchase.Cost))
         {
-            apply();
-            Console.WriteLine(successMsg);
+            purchase.Apply(this);
+            Console.WriteLine(purchase.SuccessMsg);
         }
-        else
-        {
-            Console.WriteLine("Du har inte råd.");
-        }
+        else{ Console.WriteLine("Du har inte råd."); }
     }
 
     public bool TrySpendGold(int cost)
@@ -166,42 +167,6 @@ public class Player //
         }
     }
 
-    public void MaybeDropLoot(string enemyName)
-    {
-        // Enkel loot-regel
-        if (Rng.NextDouble() < 0.35)
-        {
-            string item = "Minor Gem";
-            if (enemyName.Contains("Urdraken")) item = "Dragon Scale";
-
-            var inv = (Player[10] ?? "").Trim();
-            if (string.IsNullOrEmpty(inv)) Player[10] = item;
-            else Inventory.Add(item);
-
-            Console.WriteLine($"Föremål hittat: {item} (lagt i din väska)");
-        }
-    }
-
-    public static bool DoTreasure()
-    {
-        Console.WriteLine("Du hittar en gammal kista...");
-        if (Rng.NextDouble() < 0.5)
-        {
-            int gold = Rng.Next(8, 15);
-            AddPlayerGold(gold);
-            Console.WriteLine($"Kistan innehåller {gold} guld!");
-        }
-        else
-        {
-            var items = new[] { "Iron Dagger", "Oak Staff", "Leather Vest", "Healing Herb" };
-            string found = items[Rng.Next(items.Length)];
-            var inv = (Player[10] ?? "").Trim();
-            Player[10] = string.IsNullOrEmpty(inv) ? found : (inv + ";" + found);
-            Console.WriteLine($"Du plockar upp: {found}");
-        }
-        return true;
-    }
-
     public void SellMinorGems()
     {
         if (Inventory.IsEmpty())
@@ -225,7 +190,7 @@ public class Player //
 
     public void ShowStatus()
     {
-        Console.WriteLine($"[{Name} | {Class}]  HP {Hp}/{MaxHp}  ATK {Atk}  DEF {Def}  LVL {Level}  XP {Exp}  Guld {Gold}  Drycker {Potions}");
+        Console.WriteLine($"[{Name} | {Class.Name}]  HP {Hp}/{MaxHp}  ATK {Atk}  DEF {Def}  LVL {Level}  XP {Exp}  Guld {Gold}  Drycker {Potions}");
         if (!Inventory.IsEmpty())
         {
             Console.WriteLine($"Väska: {Inventory.Show()}");
@@ -239,4 +204,6 @@ public class Player //
         Console.WriteLine("HP återställt till max.");
         return true;
     }
+    
+    
 }

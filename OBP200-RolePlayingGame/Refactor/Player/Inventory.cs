@@ -1,12 +1,10 @@
-﻿using System.Runtime.InteropServices.Marshalling;
-
-namespace OBP200_RolePlayingGame;
+﻿namespace OBP200_RolePlayingGame.Refactor.Player;
 
 // Inventory som håller items separat från player-klassen
 // Spelaren kan kalla på funktioner i inventory för att lägga till, ta bort och kolla items utan utan att Player eller Program kan se listan
-public class Inventory
+public class Inventory : IInventory
 {
-    private List<string> _items = new();
+    private readonly List<string> _items;
     
     public Inventory(List<string> items){
         _items = items;

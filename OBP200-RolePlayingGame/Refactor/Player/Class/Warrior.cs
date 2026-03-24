@@ -3,7 +3,7 @@
 public class Warrior : IClassType
 {
     public string Name { get; } = "Warrior";
-    public double RunAwayChance { get; } = 0.2;
+    public double RunAwayChance { get; } = 0.25;
     public (int maxHp, int hp, int atk, int def, int potions, int gold) BaseStats { get; } =
         (maxHp: 40, hp: 40, atk: 7, def: 5, potions: 2, gold: 15);
     public (int MaxHp, int Atk, int Def) LevelUpStats { get; } = (MaxHp: 6, Atk: 2, Def: 2);
