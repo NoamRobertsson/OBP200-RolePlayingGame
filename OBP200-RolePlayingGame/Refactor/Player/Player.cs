@@ -36,7 +36,7 @@ public class Player : IPurchaseTarget
     }
     
 
-    public void Heal(int amount = 12)
+    private void Heal(int amount = 12)
     {
         Hp += amount;
         if (Hp > MaxHp) Hp = MaxHp;
