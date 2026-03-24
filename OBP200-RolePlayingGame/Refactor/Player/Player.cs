@@ -153,8 +153,9 @@ public class Player : IPurchaseTarget
     {
         // Nivåtrösklar
         int nextThreshold = Level == 1 ? 10 : (Level == 2 ? 25 : (Level == 3 ? 45 : Level * 20));
-
-        if (Exp >= nextThreshold)
+        
+        if (Exp < nextThreshold) return; //Undvik att entera loop om exp är under threshold
+        do
         {
             Level += 1;
 
@@ -166,7 +167,8 @@ public class Player : IPurchaseTarget
             Hp = MaxHp; // full heal vid level up
 
             Console.WriteLine($"Du når nivå {Level}! Värden ökade och HP återställd.");
-        }
+            nextThreshold = Level == 1 ? 10 : (Level == 2 ? 25 : (Level == 3 ? 45 : Level * 20));
+        }while (Exp >= nextThreshold);
     }
 
     public void SellMinorGems()
