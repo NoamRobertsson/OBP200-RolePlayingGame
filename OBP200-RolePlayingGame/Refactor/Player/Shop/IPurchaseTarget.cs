@@ -1,4 +1,4 @@
-﻿namespace OBP200_RolePlayingGame.Refactor.Player;
+﻿namespace OBP200_RolePlayingGame.Refactor.Player.Shop;
 
 public interface IPurchaseTarget
 {

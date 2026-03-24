@@ -94,8 +94,6 @@ class Program
                 classType = new Warrior();
                 break;
         }
-        (int hp, int maxhp, int atk, int def,
-            int potions, int gold) = classType.BaseStats;
         List<string> startingItems = new List<string>() { "Wooden Sword", "Cloth Armor" };
 
         // Konstruktor som ersätter player array

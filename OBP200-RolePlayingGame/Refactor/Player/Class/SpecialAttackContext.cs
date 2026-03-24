@@ -5,8 +5,8 @@ public sealed class SpecialAttackContext
 {
     public int PlayerAtk { get; init; }
     public int EnemyDef { get; init; }
-    public Random Rng { get; init; } = default!;  
-    
-    public Func<int, bool> TrySpendGold { get; init; } // För mage
-    public Action<int> TakeDamage { get; init; } // För warrior
+    public Random Rng { get; init; } = default!;
+
+    public Func<int, bool> TrySpendGold { get; init; } = null!; // För mage
+    public Action<int> TakeDamage { get; init; } = null!; // För warrior
 }
