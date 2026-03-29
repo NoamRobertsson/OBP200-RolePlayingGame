@@ -13,7 +13,7 @@ public class Rogue : IClassType
     
     public int SpecialAttackDamage(SpecialAttackContext cxt)
     {
-        if (cxt.Rng.NextDouble() < 0.5) // 50% chans att träffa
+        if (cxt.Rng.NextDouble() < 0.5) // 50% chans att ignorera enemyDef
         {
             Console.WriteLine("Rogue utför en lyckad Backstab!");
             return Math.Max(4, cxt.PlayerAtk + 6);
