@@ -3,8 +3,9 @@
 public class Mage : IClassType
 {
 
-    public string Name { get; } = "Mage";
-    public double RunAwayChance { get; } = 0.35;
+    public string Name => "Mage";
+    public double RunAwayChance => 0.35;
+
     public (int maxHp, int hp, int atk, int def, int potions, int gold) BaseStats { get; } =
         (maxHp: 28, hp: 28, atk: 10, def: 2, potions: 2, gold: 15);
     public (int MaxHp, int Atk, int Def) LevelUpStats { get; } = (MaxHp: 4, Atk: 4, Def: 1);
